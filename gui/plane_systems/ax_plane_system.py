@@ -121,3 +121,11 @@ class AxonometricPlaneSystem(BasePlaneSystem):
             QtCore.Qt.AlignCenter,
             text
         )
+
+    @property
+    def width(self):
+        return self.widget.width()
+
+    @property
+    def height(self):
+        return self.widget.height()
