@@ -211,8 +211,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if not self.can_be_drawn():
             return
 
-        self.aps.error = False
-
         # координаты камеры
         x, y, z = self.xC, self.yC, self.zC
 
@@ -263,7 +261,25 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         ops.append(t_matrix)
 
         product: Matrix = self.calculate_transform(ops)
+
+        if not self.points_inside_screen(product):
+            return
+
+        self.aps.error = False
         self.apply_matrix(product)
+
+    def points_inside_screen(self, matrix: Matrix):
+        """ Проверка на наличие точек внутри экрана """
+        for pname, point in self.points_3d.items():
+            if not self.inside_screen(point * matrix):
+                self.draw_ax_error("Точка находится за пределами экрана")
+                return False
+        return True
+
+    def inside_screen(self, point: Point3D) -> bool:
+        """ Точка внутри экрана """
+        return 0 <= point.x <= self.aps.width \
+               and 0 <= point.y <= self.aps.height
 
     @staticmethod
     def calculate_transform(ops: List[Matrix]) -> Matrix:
