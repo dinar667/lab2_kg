@@ -330,27 +330,24 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """ Текущая проекция - центральная """
         return self.selected_projection == SelectProjection.CEN
 
-    def in_origin(self) -> bool:
-        """ Камера в начале координат"""
-        return self.xC == 0 and self.yC == 0 and self.zC == 0
-
-    def camera_inside(self) -> bool:
-        """ Камера за точкой (внутри параллелепипеда) """
-        return self.xC <= self.xT and self.yC <= self.yT and self.zC <= self.zT
-
     def check_position(self) -> bool:
         """ Общая проверка на возможность отрисовки точки """
 
+        tpoint: Point3D = Point3D(self.xT, self.yT, self.zT)
+        camera: Point3D = Point3D(self.xC, self.yC, self.zC)
+
         # Если камера в начале координат
-        if self.in_origin():
+        if camera.in_origin():
             self.aps.show_error("Камера в начале координат")
             return False
 
         if self.is_central_projection():
             # Если камера внутри прямоугольника
-            if self.camera_inside():
+            if camera.inside(tpoint):
                 self.aps.show_error("Камера внутри")
                 return False
+
+            # ...
 
             self.aps.error = False
 

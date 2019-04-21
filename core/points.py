@@ -74,3 +74,11 @@ class Point3D(Point2D):
         if w == 0:
             w = 1
         return Point3D(self.x / w, self.y / w, 1)
+
+    def in_origin(self) -> bool:
+        """ Камера в начале координат"""
+        return self.x == 0 and self.y == 0 and self.z == 0
+
+    def inside(self, point: "Point3D") -> bool:
+        """ Камера за точкой (внутри параллелепипеда) """
+        return self.x <= point.x and self.y <= point.y and self.z <= point.z
