@@ -326,16 +326,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     # ПРОВЕРКИ
 
-    def is_central_projection(self):
+    def is_central_projection(self) -> bool:
+        """ Текущая проекция - центральная """
         return self.selected_projection == SelectProjection.CEN
 
     def in_origin(self) -> bool:
+        """ Камера в начале координат"""
         return self.xC == 0 and self.yC == 0 and self.zC == 0
 
     def camera_inside(self) -> bool:
+        """ Камера за точкой (внутри параллелепипеда) """
         return self.xC <= self.xT and self.yC <= self.yT and self.zC <= self.zT
 
     def check_position(self) -> bool:
+        """ Общая проверка на возможность отрисовки точки """
 
         # Если камера в начале координат
         if self.in_origin():
