@@ -74,6 +74,9 @@ class Point3D(Point2D):
     def __eq__(self, point: "Point3D"):
         return self.x == point.x and self.y == point.y and self.z == point.z
 
+    def equals(self, point: "Point3D") -> bool:
+        return self == point
+
     def normalized(self, w: float) -> "Point3D":
         if w == 0:
             w = 1
