@@ -207,8 +207,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         (для аксонометрического чертежа)
         """
 
-        if not self.check_position():
+        if self.is_central_projection():
+            can_be_drawn = self.cx_can_be_drawn()
+        else:
+            can_be_drawn = self.ax_can_be_drawn()
+
+        if not can_be_drawn:
             return
+
+        self.aps.error = False
 
         # координаты камеры
         x, y, z = self.xC, self.yC, self.zC
@@ -330,25 +337,55 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """ Текущая проекция - центральная """
         return self.selected_projection == SelectProjection.CEN
 
-    def check_position(self) -> bool:
-        """ Общая проверка на возможность отрисовки точки """
+    def ax_can_be_drawn(self) -> bool:
+        """
+        Проверка на возможность отрисовки точки при ортогональном проецировании
+        """
+        camera: Point3D = Point3D(self.xC, self.yC, self.zC)
 
-        tpoint: Point3D = Point3D(self.xT, self.yT, self.zT)
+        if camera.in_origin():
+            self.draw_ax_error(
+                "Проекции не существует: камера в начале координат"
+            )
+            return False
+
+        return True
+
+    def cx_can_be_drawn(self) -> bool:
+        """
+        Проверка на возможность отрисовки точки при центральном проецировании
+        """
+
         camera: Point3D = Point3D(self.xC, self.yC, self.zC)
 
         # Если камера в начале координат
         if camera.in_origin():
-            self.aps.show_error("Камера в начале координат")
+            self.draw_ax_error(
+                "Проекции не существует: камера в начале координат"
+            )
             return False
 
-        if self.is_central_projection():
-            # Если камера внутри прямоугольника
-            if camera.inside(tpoint):
-                self.aps.show_error("Камера внутри")
-                return False
+        tpoint: Point3D = Point3D(self.xT, self.yT, self.zT)
+        # Координаты камеры равны точке T
+        if camera.equals(tpoint):
+            self.draw_ax_error(
+                "Проекции не существует: "
+                "координаты точки и камеры совпадают."
+            )
+            return False
 
-            # ...
+        # Если камера внутри прямоугольника
+        if camera.inside(tpoint):
+            self.draw_ax_error("Камера внутри")
+            return False
 
-            self.aps.error = False
+        # Проекции между камерой и плоскостю не существует
+        if camera.cos_between(tpoint) <= 0:
+            self.draw_ax_error("Проекция точки не лежит в плоскости экрана")
+            return False
 
         return True
+
+    def draw_ax_error(self, text: str) -> None:
+        """ Показывает ошибку на аксонометрическом чертеже """
+        self.aps.show_error(text)
