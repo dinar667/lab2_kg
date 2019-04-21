@@ -45,9 +45,6 @@ class AxonometricPlaneSystem(BasePlaneSystem):
         if not self.points:
             return
 
-        # Переходим в центр координат
-        # painter.translate(self.xhalf, self.yhalf)
-
         # Рисуем все оси
         self.draw_all_axis(painter)
 
@@ -107,3 +104,20 @@ class AxonometricPlaneSystem(BasePlaneSystem):
         painter.drawLine(self.points["TX"], self.points["0"])
         painter.drawLine(self.points["TY"], self.points["0"])
         painter.drawLine(self.points["TZ"], self.points["0"])
+
+    def show_error(self, text: str) -> None:
+        self.error = True
+        painter: QtGui.QPainter = QtGui.QPainter(self.pixmap)
+        painter.begin(self.pixmap)
+
+        painter.setRenderHint(QtGui.QPainter.Antialiasing)
+        painter.setBrush(self.point_brush)
+        painter.drawRect(0, 0, self.widget.width(), self.widget.height())
+
+        painter.setBackground(self.point_brush)
+
+        painter.drawText(
+            QtCore.QRect(0, 0, self.widget.width(), self.widget.height()),
+            QtCore.Qt.AlignCenter,
+            text
+        )

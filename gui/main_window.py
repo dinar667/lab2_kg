@@ -207,11 +207,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         (для аксонометрического чертежа)
         """
 
+        if not self.check_position():
+            return
+
         # координаты камеры
         x, y, z = self.xC, self.yC, self.zC
 
-        sqrt_xy = sqrt(x * x + y * y)
-        sqrt_xyz = sqrt(x * x + y * y + z * z)
+        sqrt_xy: float = sqrt(x * x + y * y)
+        sqrt_xyz: float = sqrt(x * x + y * y + z * z)
 
         if sqrt_xyz == 0:
             return
@@ -241,7 +244,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         mx_matrix: Matrix = get_matrix_mx()
         ops.append(mx_matrix)
 
-        if self.selected_projection == SelectProjection.CEN:
+        # Если выбрано центральное проецирование
+        if self.is_central_projection():
             pr_matrix: Matrix = get_matrix_p(sqrt_xyz)
             ops.append(pr_matrix)
 
@@ -319,3 +323,31 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # Вызываем первую отрисовку
         self.on_coordinate_changed()
         self.on_projection_changed()
+
+    # ПРОВЕРКИ
+
+    def is_central_projection(self):
+        return self.selected_projection == SelectProjection.CEN
+
+    def in_origin(self) -> bool:
+        return self.xC == 0 and self.yC == 0 and self.zC == 0
+
+    def camera_inside(self) -> bool:
+        return self.xC <= self.xT and self.yC <= self.yT and self.zC <= self.zT
+
+    def check_position(self) -> bool:
+
+        # Если камера в начале координат
+        if self.in_origin():
+            self.aps.show_error("Камера в начале координат")
+            return False
+
+        if self.is_central_projection():
+            # Если камера внутри прямоугольника
+            if self.camera_inside():
+                self.aps.show_error("Камера внутри")
+                return False
+
+            self.aps.error = False
+
+        return True

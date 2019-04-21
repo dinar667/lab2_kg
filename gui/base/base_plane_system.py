@@ -51,6 +51,8 @@ class BasePlaneSystem:
         # Т.н. "полотно", на котом рисуется выходное изображение
         self.pixmap: QtGui.QPixmap = QtGui.QPixmap(self.widget.size())
 
+        self.error: bool = False
+
     @staticmethod
     def get_line(
             start: QtCore.QPointF, end: QtCore.QPointF
@@ -85,7 +87,8 @@ class BasePlaneSystem:
         self.widget.repaint()
 
     def paint_event(self, event: QtGui.QPaintEvent) -> None:
-        self.update_pixmap()
+        if not self.error:
+            self.update_pixmap()
 
         painter = QtGui.QPainter(self.widget)
         painter.begin(self.widget)
