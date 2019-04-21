@@ -207,12 +207,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         (для аксонометрического чертежа)
         """
 
-        if self.is_central_projection():
-            can_be_drawn = self.cx_can_be_drawn()
-        else:
-            can_be_drawn = self.ax_can_be_drawn()
-
-        if not can_be_drawn:
+        # Выполняем проверки
+        if not self.can_be_drawn():
             return
 
         self.aps.error = False
@@ -333,6 +329,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     # ПРОВЕРКИ
 
+    def can_be_drawn(self) -> bool:
+        if self.is_central_projection():
+            return self.cx_can_be_drawn()
+        else:
+            return self.ax_can_be_drawn()
+
     def is_central_projection(self) -> bool:
         """ Текущая проекция - центральная """
         return self.selected_projection == SelectProjection.CEN
@@ -380,7 +382,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             return False
 
         # Проекции между камерой и плоскостю не существует
-        if camera.cos_between(tpoint) <= 0:
+        ct = Point3D(
+            camera.x - tpoint.x,
+            camera.y - tpoint.y,
+            camera.z - tpoint.z
+        )
+        if camera.cos_between(ct) <= 0:
             self.draw_ax_error("Проекция точки не лежит в плоскости экрана")
             return False
 

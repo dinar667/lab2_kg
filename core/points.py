@@ -100,8 +100,8 @@ class Point3D(Point2D):
         """
         Находит косинус между текущим вектором и вектором до точки point
         """
-        mul_modules = self.module() * point.module()
-        if mul_modules == 0:
-            return 0
-        prod = (point.x - self.x) * (-self.x) + (point.y - self.y) * (-self.y) + (point.z - self.z) * (-self.z)
-        return prod / mul_modules
+        # mul_modules = self.module() * point.module()
+        # if mul_modules == 0:
+        #     return 0
+        # return self.get_prod(point) / mul_modules
+        return self.get_prod(point)
