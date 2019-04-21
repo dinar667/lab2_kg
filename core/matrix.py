@@ -6,7 +6,9 @@ import numpy as np
 class Matrix(object):
     """ Работа с матрицей """
 
-    def __init__(self, width: int = 4, height: int = 4, input_values=None):
+    def __init__(
+            self, width: int = 4, height: int = 4, input_values=None
+    ) -> None:
 
         # Столбцов в матрице
         self._width: int = width
@@ -20,15 +22,15 @@ class Matrix(object):
             self._values = np.array(input_values)
             self._width, self._height = self._values.shape
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self._values}"
 
     @property
-    def width(self):
+    def width(self) -> int:
         return self._width
 
     @property
-    def height(self):
+    def height(self) -> int:
         return self._height
 
     @property
@@ -53,31 +55,31 @@ class Matrix(object):
     # Операторы
 
     # Сложение
-    def __add__(self, other: "Matrix"):
+    def __add__(self, other: "Matrix") -> "Matrix":
         matrix = Matrix()
         matrix.values = np.add(self.values, other.values)
         return matrix
 
     # Вычитание
-    def __sub__(self, other: "Matrix"):
+    def __sub__(self, other: "Matrix") -> "Matrix":
         matrix = Matrix()
         matrix.values = np.subtract(self.values, other.values)
         return matrix
 
     # Умножение
-    def __mul__(self, other: "Matrix"):
+    def __mul__(self, other: "Matrix") -> "Matrix":
         matrix = Matrix()
         matrix.values = np.dot(self.values, other.values)
         return matrix
 
     # Транспонирование
-    def transposed(self):
+    def transposed(self) -> "Matrix":
         matrix = Matrix()
         matrix.values = np.transpose(self.values)
         return matrix
 
     # Обратная матрица
-    def inverted(self):
+    def inverted(self) -> "Matrix":
         matrix = Matrix()
         matrix.values = np.linalg.inv(self.values)
         return matrix
