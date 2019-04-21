@@ -1,18 +1,19 @@
 # coding: utf-8
 
 import enum
+from functools import reduce
+from operator import mul
 from typing import Dict, List
-from math import sqrt
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from math import sqrt
 
+from core.mx_utils import *
 from core.points import Point3D
-from core.matrix import Matrix
 from gui.plane_systems.ax_plane_system import AxonometricPlaneSystem
 from gui.plane_systems.cx_plane_system import ComplexPlaneSystem
 from gui.settings import *
 from gui.ui_main_window import Ui_MainWindow
-from core.mx_utils import *
 
 
 class SelectPoint(enum.Enum):
@@ -259,10 +260,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     @staticmethod
     def calculate_transform(ops: List[Matrix]) -> Matrix:
-        product: Matrix = get_eye()
-        for op in ops:
-            product *= op
-        return product
+        return reduce(mul, ops)
 
     def apply_matrix(self, matrix: Matrix) -> None:
         for pname, point in self.points_3d.items():
