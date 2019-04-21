@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import numpy as np
+from math import sqrt
 
 from core.matrix import Matrix
 
@@ -56,8 +57,8 @@ class Point3D(Point2D):
     def to_2d_xy(self) -> Point2D:
         return Point2D(self._x, self._y)
 
-    # Скалярное произведение точек
     def get_prod(self, point) -> float:
+        """ Скалярное произведение точек """
         return self._x * point.x + self._y * point.y + self._z * point.z
 
     def __mul__(self, matrix: Matrix) -> "Point3D":
@@ -69,6 +70,9 @@ class Point3D(Point2D):
 
     def __bool__(self) -> bool:
         return any((self.x, self.y, self.z))
+
+    def __eq__(self, point: "Point3D"):
+        return self.x == point.x and self.y == point.y and self.z == point.z
 
     def normalized(self, w: float) -> "Point3D":
         if w == 0:
@@ -84,3 +88,17 @@ class Point3D(Point2D):
         Текущая точка находится за другой точкой (внутри параллелепипеда)
         """
         return self.x <= point.x and self.y <= point.y and self.z <= point.z
+
+    def module(self) -> float:
+        """ Модуль вектора """
+        return sqrt(self._x * self._x + self._y * self._y + self._z * self._z)
+
+    def cos_between(self, point: "Point3D") -> float:
+        """
+        Находит косинус между текущим вектором и вектором до точки point
+        """
+        mul_modules = self.module() * point.module()
+        if mul_modules == 0:
+            return 0
+        prod = (point.x - self.x) * (-self.x) + (point.y - self.y) * (-self.y) + (point.z - self.z) * (-self.z)
+        return prod / mul_modules
