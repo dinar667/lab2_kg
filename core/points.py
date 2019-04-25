@@ -81,8 +81,6 @@ class Point3D(Point2D):
         return self == point
 
     def normalized(self, w: float) -> "Point3D":
-        if w == 0:
-            w = 1
         return Point3D(self.x / w, self.y / w, 1)
 
     def in_origin(self) -> bool:

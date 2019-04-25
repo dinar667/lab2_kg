@@ -268,7 +268,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.aps.error = False
         self.apply_matrix(product)
 
-    def points_inside_screen(self, matrix: Matrix):
+    def points_inside_screen(self, matrix: Matrix) -> bool:
         """ Проверка на наличие точек внутри экрана """
         for pname, point in self.points_3d.items():
             if not self.inside_screen(point * matrix):
