@@ -397,12 +397,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.draw_ax_error("Камера внутри")
             return False
 
-        # Проекции между камерой и плоскостю не существует
-        ct = Point3D(
-            camera.x - tpoint.x,
-            camera.y - tpoint.y,
-            camera.z - tpoint.z
-        )
+        # Проекции между камерой и плоскостью не существует
+        # ct - вектор CT
+        ct: Point3D = camera - tpoint
         if camera.cos_between(ct) <= 0:
             self.draw_ax_error("Проекция точки не лежит в плоскости экрана")
             return False
