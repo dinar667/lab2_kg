@@ -74,6 +74,9 @@ class Point3D(Point2D):
     def __eq__(self, point: "Point3D"):
         return self.x == point.x and self.y == point.y and self.z == point.z
 
+    def __sub__(self, point: "Point3D") -> "Point3D":
+        return Point3D(self.x - point.x, self.y - point.y, self.z - point.z)
+
     def equals(self, point: "Point3D") -> bool:
         return self == point
 
